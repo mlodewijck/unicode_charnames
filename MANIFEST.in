@@ -1,0 +1,7 @@
+include LICENSE
+include UNICODE-COPYRIGHT
+include README.md
+include CHANGELOG.md
+recursive-include * *.py *.txt
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc

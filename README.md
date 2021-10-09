@@ -3,7 +3,7 @@
 
 Unicode characters have names that serve as unique identifiers for each character. The character names in the Unicode Standard are identical to those of ISO/IEC 10646.
 
-The unicode-charnames package performs searches for Unicode character names or code point labels by Unicode character, and searches for Unicode code points by character names. It also performs substring searches in Unicode character names. This package supports version 13.0 of the Unicode Standard (143,859 characters).
+The unicode-charnames package performs searches for Unicode character names or code point labels by Unicode character, and searches for Unicode code points by character names. It also performs substring searches in Unicode character names. This package supports version 14.0 of the Unicode Standard (144,697 characters).
 
 The generic term “character name” refers to the Unicode character “Name” property value for an encoded Unicode character. For code points that do not have character names (unassigned, reserved code points and other special code point types), the Unicode Standard uses constructed Unicode code point labels, displayed between angle brackets, to stand in for character names.
 
@@ -21,46 +21,49 @@ The library provides:
 
 ### Example usage
 ```python
-    # -*- coding: utf-8 -*-
     from unicode_charnames import charname, codepoint, search_charnames
 
-    # charname()
+    # charname
 
-    for item in ['龠', '💓', '\u00E5', '\u0002']:
-        print(charname(item))
+    for char in '龠💓\u00E5\u0002':
+        print(charname(char))
         # Output:
         # CJK UNIFIED IDEOGRAPH-9FA0
         # BEATING HEART
         # LATIN SMALL LETTER A WITH RING ABOVE
         # <control-0002>
 
-    # codepoint()
+    # codepoint
 
     names = [
         'LATIN CAPITAL LETTER E WITH ACUTE',
         'SQUARE ERA NAME REIWA',
         'SUPERCALIFRAGILISTICEXPIALIDOCIOUS'
     ]
-    for item in names:
-        print(codepoint(item))
+
+    for name in names:
+        print(codepoint(name))
         # Output:
         # 00C9
         # 32FF
         # None
 
-    # search_charnames()
+    # search_charnames
 
-    for x in search_charnames('sextile'):
+    for x in search_charnames('break'):
         print('\t'.join(x))
         # Output:
-        # 26B9	SEXTILE
-        # 26BA	SEMISEXTILE
+        # 00A0    NO-BREAK SPACE
+        # 2011    NON-BREAKING HYPHEN
+        # 202F    NARROW NO-BREAK SPACE
+        # 4DEA    HEXAGRAM FOR BREAKTHROUGH
+        # FEFF    ZERO WIDTH NO-BREAK SPACE
 ```
 
 ### References
-* https://www.unicode.org/versions/Unicode13.0.0/ch04.pdf#M9.40526.Heading.48.NameNormative
-* https://www.unicode.org/Public/13.0.0/ucd/UnicodeData.txt
-* https://www.unicode.org/Public/13.0.0/ucd/extracted/DerivedName.txt
+* https://www.unicode.org/versions/Unicode14.0.0/ch04.pdf#G2082
+* https://www.unicode.org/Public/14.0.0/ucd/UnicodeData.txt
+* https://www.unicode.org/Public/14.0.0/ucd/extracted/DerivedName.txt
 
 ### License
 unicode-charnames is released under an MIT license. The full text of the license is available [here](https://github.com/mlodewijck/unicode_charnames/blob/master/LICENSE).

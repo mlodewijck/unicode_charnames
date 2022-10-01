@@ -1,34 +1,36 @@
-from setuptools import setup, find_packages
+"""Setup script for unicode_charnames."""
 
-from unicode_charnames import __version__
+from setuptools import setup, find_packages
 
 URL = "https://github.com/mlodewijck/unicode_charnames"
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+
+def get_version():
+    version_file = "unicode_charnames/_version.py"
+    with open(version_file) as f:
+        exec(compile(f.read(), version_file, "exec"))
+    return locals()["__version__"]
+
+with open("README.md", encoding="utf-8") as f:
+    README = f.read()
 
 setup(
     name="unicode_charnames",
-    version=__version__,
-    description="Look up Unicode character name or code point label and search in Unicode character names",
-    long_description=long_description,
+    version=get_version(),
+    description=(
+        "Look up Unicode character name or code point label "
+        "and search in Unicode character names"
+    ),
+    long_description=README,
     long_description_content_type="text/markdown",
-    url=URL,
     author="Marc Lodewijck",
     author_email="mlodewijck@gmail.com",
     license="MIT",
-    classifiers=[
-        "Intended Audience :: Developers",
-        "Topic :: Text Processing :: Filters",
-        "Topic :: Utilities",
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ],
+    url=URL,
+    project_urls={
+        "Bug Reports": "{}/issues".format(URL),
+        "Source": "{}/".format(URL),
+    },
     keywords=[
         "Unicode",
         "Unicode data",
@@ -36,12 +38,22 @@ setup(
         "character names",
         "characters",
     ],
+    # Trove classifiers
+    classifiers=[
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Topic :: Text Processing :: Filters",
+        "Topic :: Utilities",
+    ],
     python_requires=">=3.6",
     packages=find_packages(),
-    include_package_data=True,  # Checks MANIFEST.in for explicit rules
+    include_package_data=True,
+    # All data files matched by MANIFEST.in will get included
+    # if they are inside a package directory.
     zip_safe=False,
-    project_urls={
-        "Bug Reports": "{}/issues".format(URL),
-        "Source": "{}/".format(URL),
-    },
 )

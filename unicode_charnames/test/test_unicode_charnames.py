@@ -12,10 +12,10 @@ from unicode_charnames import (
 class TestSuite(unittest.TestCase):
 
     def test_UNICODE_VERSION(self):
-        self.assertEqual(UNICODE_VERSION, "14.0.0")
+        self.assertEqual(UNICODE_VERSION, "15.0.0")
 
     def test_UCD_VERSION(self):
-        self.assertEqual(UCD_VERSION, "14.0.0")
+        self.assertEqual(UCD_VERSION, "15.0.0")
 
     def test_charname(self):
         expected = "LATIN CAPITAL LETTER E WITH ACUTE"
@@ -51,13 +51,6 @@ class TestSuite(unittest.TestCase):
 
         self.assertEqual(list(search_charnames("ERA NAME")), expected)
         self.assertEqual(list(search_charnames("era name")), expected)
-
-        expected = [
-            ("26B9", "SEXTILE"),
-            ("26BA", "SEMISEXTILE"),
-        ]
-
-        self.assertEqual(list(search_charnames("sextile")), expected)
 
 
 if __name__ == "__main__":

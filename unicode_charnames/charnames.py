@@ -1,51 +1,48 @@
-"""unicode_charnames.charnames"""
+"""Unicode character names and code point labels."""
 
-# Standard library imports
-import os.path as _p
-import re
+from pathlib import Path as _Path
 
-# Local imports
 from unicode_charnames import UCD_VERSION
 
+# File from the Unicode character database (UCD)
 _UNICODE_FILE = "DerivedName.txt"
 
 
-def _make_names_dict():
+def _make_dict():
     character_names = {}
 
-    def convert(cp_range, prefix):
+    def resolve(cp_range, prefix):
         start, end = cp_range.split("..")
         character_names.update({
             cp: f"{prefix}{cp:04X}"
             for cp in range(int(start, 16), int(end, 16) + 1)
         })
 
-    with open(_p.join(_p.dirname(__file__), _UNICODE_FILE), "r") as f:
-        version = re.match(
-            r"^#\s*DerivedName-(.+)\.txt.*$", f.readline()
-        ).group(1)
-        if version != UCD_VERSION:
-            raise SystemExit(f"\n{__package__}: wrong UCD version number.")
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                cp, name = [x.strip() for x in line.split(";")]
-                if ".." in cp:
-                    convert(cp, name[:-1])
-                else:
-                    character_names[int(cp, 16)] = name
+    path = _Path(__file__).parent.joinpath(_UNICODE_FILE)
+    with path.open() as f:
+        if UCD_VERSION not in f.readline():
+            raise SystemExit(
+                f"\n{__package__}: "
+                f"wrong UCD version number in {_UNICODE_FILE}."
+            )
+        lines = f.read().splitlines()
+
+    for line in lines:
+        if line and not line.startswith("#"):
+            cp, name = [x.strip() for x in line.split(";")]
+            if ".." in cp:
+                resolve(cp, name[:-1])
+            else:
+                character_names[int(cp, 16)] = name
 
     return character_names
 
 
 # Normative Unicode character names
-_CHARACTER_NAMES = _make_names_dict()
+_CHARACTER_NAMES = _make_dict()
 
 # Inverted character names dictionary
 _CHARACTER_NAMES_INV = {v: k for k, v in _CHARACTER_NAMES.items()}
-
-# assert len(_CHARACTER_NAMES_INV) == len(_CHARACTER_NAMES)  # checked
-
 
 _control = [
     *range(0x000000, 0x00001F + 1),
@@ -83,6 +80,16 @@ _noncharacter = [
     *range(0x10FFFE, 0x10FFFF + 1),
 ]
 
+# Code points assigned to an abstract character
+# print(f"{len(_CHARACTER_NAMES):,}")  # 149,186
+# assert len(_CHARACTER_NAMES_INV) == len(_CHARACTER_NAMES)
+
+# Code points with a normative function
+# print(f"{len(_control):,}")          #      65
+# print(f"{len(_private_use):,}")      # 137,468
+# print(f"{len(_surrogate):,}")        #   2,048
+# print(f"{len(_noncharacter):,}")     #      66
+
 _LABELS = {
     frozenset(_control)      : "control",
     frozenset(_private_use)  : "private-use",
@@ -90,15 +97,7 @@ _LABELS = {
     frozenset(_noncharacter) : "noncharacter",
 }
 
-# Code points assigned to an abstract character
-# print(f"{len(_CHARACTER_NAMES):,}")      # 144,697
-# print(f"{len(_CHARACTER_NAMES_INV):,}")  # 144,697
-
-# Code points with a normative function
-# print(f"{len(_control):,}")              #      65
-# print(f"{len(_private_use):,}")          # 137,468
-# print(f"{len(_surrogate):,}")            #   2,048
-# print(f"{len(_noncharacter):,}")         #      66
+del _control, _private_use, _surrogate, _noncharacter
 
 
 def charname(char):

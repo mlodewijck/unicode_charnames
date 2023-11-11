@@ -1,5 +1,5 @@
 # unicode-charnames
-This package supports Unicode version&nbsp;15.0, released on September&nbsp;13, 2022.
+This package supports Unicode version&nbsp;15.1, released in September&nbsp;2023.
 
 The library provides:
 
@@ -25,7 +25,7 @@ To get the version of the Unicode character database currently used:
 ```python
 >>> from unicode_charnames import UCD_VERSION
 >>> UCD_VERSION
-'15.0.0'
+'15.1.0'
 ```
 
 ### Example usage
@@ -35,7 +35,6 @@ To get the version of the Unicode character database currently used:
     # charname
     for char in '龠💓\u00E5\u0002':
         print(charname(char))
-        # Output:
         # CJK UNIFIED IDEOGRAPH-9FA0
         # BEATING HEART
         # LATIN SMALL LETTER A WITH RING ABOVE
@@ -48,7 +47,6 @@ To get the version of the Unicode character database currently used:
             'SUPERCALIFRAGILISTICEXPIALIDOCIOUS'
     ]:
         print(codepoint(name))
-        # Output:
         # 00C9
         # 32FF
         # None
@@ -56,7 +54,6 @@ To get the version of the Unicode character database currently used:
     # search_charnames
     for x in search_charnames('break'):
         print('\t'.join(x))
-        # Output:
         # 00A0    NO-BREAK SPACE
         # 2011    NON-BREAKING HYPHEN
         # 202F    NARROW NO-BREAK SPACE
@@ -65,9 +62,9 @@ To get the version of the Unicode character database currently used:
 ```
 
 ### Related resource
-This implementation is based on the following resource: [Section 4.8, Name, in the Unicode core specification, version&nbsp;15.0.0](https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#G2082).
+This implementation is based on the following resource: [Section 4.8, Name, in the Unicode core specification, version&nbsp;15.1.0](https://www.unicode.org/versions/Unicode15.1.0/ch04.pdf#G2082).
 
 ### Licenses
 The code is available under the [MIT license](https://github.com/mlodewijck/unicode_charnames/blob/master/LICENSE).
 
-Usage of Unicode data files is governed by the [UNICODE TERMS OF USE](https://www.unicode.org/copyright.html), a copy of which is included as [UNICODE-LICENSE](https://github.com/mlodewijck/unicode_charnames/blob/master/UNICODE-LICENSE).
+Usage of Unicode data files is governed by the [UNICODE TERMS OF USE](https://www.unicode.org/copyright.html). Further specifications of rights and restrictions pertaining to the use of the Unicode data files and software can be found in the [Unicode Data Files and Software License](https://www.unicode.org/license.txt), a copy of which is included as [UNICODE-LICENSE](https://github.com/mlodewijck/unicode_charnames/blob/master/UNICODE-LICENSE).

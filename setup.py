@@ -42,15 +42,14 @@ setup(
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Text Processing :: Filters",
         "Topic :: Utilities",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     packages=find_packages(),
     include_package_data=True,
     # All data files matched by MANIFEST.in will get included

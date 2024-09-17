@@ -1,56 +1,9 @@
 """Unicode character names and code point labels."""
 
-try:
-    from importlib.resources import files as _files
-    # Python 3.9 or later
-except ImportError:
-    from importlib.resources import open_text as _open_text
-    # Python 3.7 or later
-    # Deprecated starting from Python 3.11
-
-from unicode_charnames import UCD_VERSION
-
-# File from the Unicode character database (UCD)
-# Source: https://www.unicode.org/Public/15.1.0/ucd/extracted/DerivedName.txt
-_UNICODE_FILE = "DerivedName.txt"
-
-
-def _make_dict():
-    try:
-        fh = _files(__package__).joinpath(_UNICODE_FILE).open(encoding="utf-8")
-    except NameError:
-        fh = _open_text(__package__, _UNICODE_FILE)
-
-    if UCD_VERSION not in fh.readline():
-        raise SystemExit(f"\n{__package__}: wrong UCD version number.")
-
-    lines = fh.read().splitlines()
-    fh.close()
-
-    character_names = {}
-
-    for line in lines:
-        if not line.startswith("#"):
-            item, _, name = line.partition(";")
-            if ".." in item:
-                start, _, end = item.rstrip().partition("..")
-                character_names.update({
-                    x: f"{name.lstrip()[:-1]}{x:04X}"
-                    for x in range(int(start, 16), int(end, 16) + 1)
-                })
-            elif line:
-                character_names[int(item.rstrip(), 16)] = name.lstrip()
-
-    return character_names
-
-
-# Normative Unicode character names
-_CHARACTER_NAMES = _make_dict()
-
-# Inverted character names dictionary
-_CHARACTER_NAMES_INV = {v: k for k, v in _CHARACTER_NAMES.items()}
-
-# assert len(_CHARACTER_NAMES_INV) == len(_CHARACTER_NAMES)
+from unicode_charnames._unicode_names import (
+    _CHARACTER_NAMES,
+    _CHARACTER_NAMES_INV,
+)
 
 _control = [
     *range(0x000000, 0x00001F + 1),
@@ -89,7 +42,7 @@ _noncharacter = [
 ]
 
 # Code points assigned to an abstract character
-# print(f"{len(_CHARACTER_NAMES):,}")  # 149,813
+# print(f"{len(_CHARACTER_NAMES):,}")  # 154,998
 
 # Code points with a normative function
 # print(f"{len(_control):,}")          #      65
@@ -98,10 +51,10 @@ _noncharacter = [
 # print(f"{len(_noncharacter):,}")     #      66
 
 _LABELS = {
-    frozenset(_control)      : "control",
-    frozenset(_private_use)  : "private-use",
-    frozenset(_surrogate)    : "surrogate",
-    frozenset(_noncharacter) : "noncharacter",
+    frozenset(_control): "control",
+    frozenset(_private_use): "private-use",
+    frozenset(_surrogate): "surrogate",
+    frozenset(_noncharacter): "noncharacter",
 }
 
 del _control, _private_use, _surrogate, _noncharacter
@@ -118,11 +71,10 @@ def charname(char):
         str: The Unicode name or the code point label of the character.
 
     Raises:
-        TypeError: If `char` is not a single Unicode character (a string
-            of length 1).
+        TypeError: If `char` is not a string.
+        ValueError: If `char` is not a single character.
 
     Examples:
-
         >>> charname("A")
         'LATIN CAPITAL LETTER A'
 
@@ -136,6 +88,18 @@ def charname(char):
         '<private-use-F8FF>'
 
     """
+    if not isinstance(char, str):
+        raise TypeError(
+            f"expected a string of length 1, but got {repr(char)} "
+            f"of type {type(char).__name__}"
+        )
+
+    if len(char) != 1:
+        raise ValueError(
+            f"expected a string of length 1, but got {repr(char)} "
+            f"of length {len(char)}"
+        )
+
     cp = ord(char)
 
     if cp not in _CHARACTER_NAMES:
@@ -163,8 +127,10 @@ def codepoint(name):
         str: The Unicode code point of the character in the hexadecimal format,
             or `None` if the name is not found.
 
-    Examples:
+    Raises:
+        TypeError: If `name` is not a string.
 
+    Examples:
         >>> codepoint("LATIN CAPITAL LETTER E WITH ACUTE")
         '00C9'
 
@@ -178,6 +144,9 @@ def codepoint(name):
         None
 
     """
+    if not isinstance(name, str):
+        raise TypeError(f"expected a string, but got {type(name).__name__}")
+
     if value := _CHARACTER_NAMES_INV.get(name):
         return f"{value:04X}"
     return value
@@ -200,8 +169,11 @@ def search_charnames(substr):
             code point and the character name holding the input substring.
             No tuple is yielded if there is no match.
 
-    Examples:
+    Raises:
+        TypeError: If `substr` is not a string.
+        ValueError: If `substr` is an empty string.
 
+    Examples:
         >>> list(search_charnames("SEXTILE"))
         [('26B9', 'SEXTILE'), ('26BA', 'SEMISEXTILE')]
 
@@ -218,6 +190,17 @@ def search_charnames(substr):
         ('337E', 'SQUARE ERA NAME MEIZI')
 
     """
+    if not isinstance(substr, str):
+        raise TypeError(f"expected a string, but got {type(substr).__name__}")
+
+    if not substr:
+        raise ValueError("expected a non-empty string for search")
+
     for name, cp in _CHARACTER_NAMES_INV.items():
         if substr.upper() in name:
             yield f"{cp:04X}", name
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
